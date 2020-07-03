@@ -1,0 +1,291 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Тестовое задание",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/activities": {
+            "get": {
+                "tags": [
+                    "Мероприятия"
+                ],
+                "summary": "Все мероприятия",
+                "description": "Показ всех мероприятия с их участинками",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Список всех мероприятия с их участниками"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Мероприятия"
+                ],
+                "summary": "Добавление пользователя",
+                "description": "Добавление пользователя к существующему мероприятию",
+                "operationId": "store",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AddUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пользователь успешно добавлен к выбранному мероприятию"
+                    },
+                    "400": {
+                        "description": "Такого мероприятия не существует или пользователь уже зарегестрирован на это мероприятие"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/activities/{id}": {
+            "get": {
+                "tags": [
+                    "Мероприятия"
+                ],
+                "summary": "Отображение определенного мероприятия",
+                "description": "Отображение определенного мероприятия и пользователей которые в нём участвуют",
+                "operationId": "show",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Уникальный идентификатор мероприятия"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Мероприятие и его участники"
+                    },
+                    "404": {
+                        "description": "Такого мероприятия не существует"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Мероприятия"
+                ],
+                "summary": "Обновление информации о пользователе",
+                "description": "Обновление информации о, уже добавленом в мероприятие, пользователе",
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Уникальный идентификатор мероприятия для которого обновить пользователя"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Информация о пользователе успешно обновлена"
+                    },
+                    "404": {
+                        "description": "Такого мероприятия не существует или выбранный пользователь на него не зарегестрирован"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/activity/delete-user": {
+            "delete": {
+                "tags": [
+                    "Мероприятия"
+                ],
+                "summary": "Удаление пользователя",
+                "description": "Удаление пользователя из выбранного мероприятия",
+                "operationId": "deleteUserFromActivity",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeleteUser"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пользователь успешно удалён"
+                    },
+                    "404": {
+                        "description": "Такого мероприятия не существует или пользователь не участвует в нём"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "AddUser": {
+                "title": "Добавление пользователя",
+                "description": "Регистрация нового пользователя на мероприятие",
+                "required": [
+                    "name",
+                    "surname",
+                    "patronymic",
+                    "email",
+                    "activity_id"
+                ],
+                "properties": {
+                    "name": {
+                        "title": "Имя",
+                        "description": "Имя пользователя",
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 4,
+                        "example": "Иван"
+                    },
+                    "surname": {
+                        "title": "Фамилия",
+                        "description": "Фамилия пользователя",
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 4,
+                        "example": "Иванов"
+                    },
+                    "patronymic": {
+                        "title": "Отчество",
+                        "description": "Отчество пользователя",
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 4,
+                        "example": "Иванович"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email пользователя",
+                        "type": "email",
+                        "example": "test@test.ru"
+                    },
+                    "activity_id": {
+                        "title": "Идентификатор",
+                        "description": "Уникальный идентификатор мероприятия",
+                        "type": "number",
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "DeleteUser": {
+                "title": "Удаление пользователя",
+                "description": "Удаление пользователя из выбранного мероприятия",
+                "required": [
+                    "user_id",
+                    "activity_id"
+                ],
+                "properties": {
+                    "user_id": {
+                        "title": "Идентификатор пользователя",
+                        "description": "Уникальный идентификатор пользователя",
+                        "type": "number",
+                        "example": "1"
+                    },
+                    "activity_id": {
+                        "title": "Идентификатор мероприятия",
+                        "description": "Уникальный идентификатор мероприятия",
+                        "type": "number",
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateUser": {
+                "title": "Обновление пользователя",
+                "description": "Обновление данных о уже существующем пользователе",
+                "required": [
+                    "user_id"
+                ],
+                "properties": {
+                    "name": {
+                        "title": "Имя",
+                        "description": "Имя пользователя",
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 4,
+                        "example": "Иван"
+                    },
+                    "surname": {
+                        "title": "Фамилия",
+                        "description": "Фамилия пользователя",
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 4,
+                        "example": "Иванов"
+                    },
+                    "patronymic": {
+                        "title": "Отчество",
+                        "description": "Отчество пользователя",
+                        "type": "string",
+                        "maxLength": 200,
+                        "minLength": 4,
+                        "example": "Иванович"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email пользователя",
+                        "type": "email",
+                        "example": "test@test.ru"
+                    },
+                    "user_id": {
+                        "title": "Идентификатор",
+                        "description": "Уникальный идентификатор пользователя",
+                        "type": "number",
+                        "example": "1"
+                    }
+                },
+                "type": "object"
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "apiKey",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
